@@ -12,11 +12,11 @@ public class ChatHandler extends Thread {
     private final DataInputStream inStream;
     private final DataOutputStream outStream;
     private boolean isOn;
+    private  List<ChatHandler> handlers;
 
-    private static List<ChatHandler> handlers = Collections.synchronizedList(new ArrayList<>());
-
-    public ChatHandler(Socket socket) throws IOException {
+    public ChatHandler(Socket socket, List<ChatHandler> handlers) throws IOException {
         this.socket = socket;
+        this.handlers = handlers;
         inStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
     }
@@ -47,7 +47,7 @@ public class ChatHandler extends Thread {
         }
     }
 
-    protected static void broadcast(String message) {
+    protected  void broadcast(String message) {
         synchronized (handlers) {
             Iterator<ChatHandler> it = handlers.iterator();
             while (it.hasNext()) {
